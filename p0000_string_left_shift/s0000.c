@@ -9,6 +9,8 @@
 // (3) one solution read from the link, but implemented by myself: group_left_shift() move chars from left to right in a grouping and recursive manner
 // The third one is the best. Although it takes the same number of shift operations as the second way does, it achieves the best because it utlizies spatial locality for processor caches.
 //
+// (4) got to know a new approach: 3-step flip. So implemented it.
+//
 // Lei Tian, <leitian.hust@gmail.com>
 // 
 #include<stdio.h>
@@ -19,6 +21,7 @@
 static uint32_t naive_left_shift(char *str, uint32_t str_len, uint32_t shift_len);
 static uint32_t swap_left_shift(char *str, uint32_t str_len, uint32_t shift_len);
 static uint32_t group_left_shift(char *str, uint32_t str_len, uint32_t shift_len);
+static uint32_t flip_left_shift(char *str, uint32_t str_len, uint32_t shift_len);
 
 int main(void)
 {
@@ -54,6 +57,11 @@ int main(void)
     strcpy(my_str, example_str);
     ret_code = group_left_shift(my_str, str_len, shift_len);
     printf("group shift: new str %s, len %u, char shift num %u\n", my_str, str_len, ret_code);
+
+    strcpy(my_str, example_str);
+    ret_code = flip_left_shift(my_str, str_len, shift_len);
+    printf("flip shift: new str %s, len %u, char shift num %u\n", my_str, str_len, ret_code);
+
 
     if (!my_str)
         free(my_str);
@@ -209,5 +217,37 @@ static uint32_t group_left_shift(char *str, uint32_t str_len, uint32_t shift_len
     }
     return num_shift_ops;
 }
+
+static uint32_t flip(char *str, uint32_t str_len)
+{
+    uint32_t i, rest, num_shift_ops;
+    char c_tmp;
+
+    i = 0;
+    num_shift_ops = 0;
+    rest = str_len;
+    while (rest > 1){
+        c_tmp = str[i];
+        str[i] = str[str_len-1-i];    
+        str[str_len-1-i] = c_tmp;
+        num_shift_ops++;
+        i++;
+        rest -= 2;
+    }
+    return num_shift_ops;
+}
+
+static uint32_t flip_left_shift(char *str, uint32_t str_len, uint32_t shift_len)
+{
+    uint32_t num_shift_ops;
+ 
+    num_shift_ops = 0;
+    num_shift_ops += flip(str, shift_len);
+    num_shift_ops += flip((str+shift_len), (str_len-shift_len));
+    num_shift_ops += flip(str, str_len);
+
+    return num_shift_ops;
+}
+
 
 
