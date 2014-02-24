@@ -7,7 +7,7 @@
 // (1) naive solution: naive_left_shift() iteratively move chars
 // (2) better solution: swap_left_shift() end-to-end exchange
 // (3) one solution read from the link, but implemented by myself: group_left_shift() move chars from left to right in a grouping and recursive manner
-// The third one is the best. Although it takes the same number of shirf operations as the second way, it achieves the best because it utlizies spatial locality for processor caches.
+// The third one is the best. Although it takes the same number of shift operations as the second way does, it achieves the best because it utlizies spatial locality for processor caches.
 //
 // Lei Tian, <leitian.hust@gmail.com>
 // 
