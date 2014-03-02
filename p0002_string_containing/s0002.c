@@ -25,18 +25,22 @@
 
 static uint32_t naive_containing_test(char *str_a, char *str_b);
 static uint32_t map_containing_test(char *str_a, char *str_b);
+static uint32_t map_containing_test_2(char *str_a, char *str_b);
 
 
 int main(void)
 {
 	char *a_str = "abcdefghijklmn";
-	char *b_str = "ghijkz";
+	char *b_str = "bhcn";
 	uint32_t ret_code;
 
 	ret_code = naive_containing_test(a_str, b_str);
 	printf("A: %s, B: %s, INCLUDED: %s\n", a_str, b_str, (ret_code==0) ? "False" : "True");
 
     ret_code = map_containing_test(a_str, b_str);
+	printf("A: %s, B: %s, INCLUDED: %s\n", a_str, b_str, (ret_code==0) ? "False" : "True");
+
+    ret_code = map_containing_test_2(a_str, b_str);
 	printf("A: %s, B: %s, INCLUDED: %s\n", a_str, b_str, (ret_code==0) ? "False" : "True");
 
     return 0;
@@ -89,3 +93,28 @@ static uint32_t map_containing_test(char *str_a, char *str_b)
     printf("str a map: %llu str b map: %llu\n", a_map, b_map);
     return (((a_map | b_map) == a_map)? 1 : 0);
 }
+
+
+// to further improve performance, we compare each character against the mapping of the first string
+// so as to avoid the complete mapping operation for the second string
+static uint32_t map_containing_test_2(char *str_a, char *str_b)
+{
+    int i;
+    char c;
+    uint32_t is_contained;
+
+    uint64_t a_map = 0, b_map = 0;
+
+    a_map = str_2_map(str_a);
+    for (i = 0; i < strlen(str_b); i++){
+        c = str_b[i];
+        assert (c >= 'a');
+        b_map = 1 << (c - 'a');
+        is_contained = (((a_map | b_map) == a_map)? 1 : 0);
+        if (!is_contained)
+            return 0;
+    }
+
+    return 1;
+}
+
