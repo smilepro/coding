@@ -27,12 +27,12 @@ static uint32_t naive_containing_test(char *str_a, char *str_b);
 static uint32_t map_containing_test(char *str_a, char *str_b);
 static uint32_t map_containing_test_2(char *str_a, char *str_b);
 static uint32_t prime_containing_test(char *str_a, char *str_b);
-
+static uint32_t hash_containing_test(char *str_a, char *str_b);
 
 int main(void)
 {
 	char *a_str = "abcdefghijklmn";
-	char *b_str = "bhzcn";
+	char *b_str = "bhacn";
 	uint32_t ret_code;
 
 	ret_code = naive_containing_test(a_str, b_str);
@@ -45,6 +45,9 @@ int main(void)
 	printf("A: %s, B: %s, INCLUDED: %s\n", a_str, b_str, (ret_code==0) ? "False" : "True");
 
     ret_code = prime_containing_test(a_str, b_str);
+	printf("A: %s, B: %s, INCLUDED: %s\n", a_str, b_str, (ret_code==0) ? "False" : "True");
+
+    ret_code = hash_containing_test(a_str, b_str);
 	printf("A: %s, B: %s, INCLUDED: %s\n", a_str, b_str, (ret_code==0) ? "False" : "True");
 
     return 0;
@@ -150,5 +153,34 @@ static uint32_t prime_containing_test(char *str_a, char *str_b)
     }
 
     return 1;
+}
+
+
+static uint32_t hash_containing_test(char *str_a, char *str_b)
+{
+    int hash_table[26];
+    int i, index, cnt =0;
+
+    memset(hash_table, 0, 26*(sizeof(int)));
+
+    for (i = 0; i < strlen(str_b); i++){
+        index = str_b[i] - 'a';
+        assert((index >= 0) && (index < 26));
+        hash_table[index] = 1;
+        cnt++;
+    }
+
+    for (i = 0; i < strlen(str_a); i++){
+        index = str_a[i] - 'a';
+        assert((index >= 0) && (index < 26));
+        if (hash_table[index] == 1){
+            hash_table[index] = 0;
+            cnt--;
+        }
+        if (cnt == 0)
+            return 1;
+    }
+
+    return 0;
 }
 
